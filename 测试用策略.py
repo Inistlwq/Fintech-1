@@ -1,4 +1,5 @@
 #coding:utf-8
+
 '''
 样例程序，用户只需要设计每天需要进行的操作，不需要考虑各种时间切片问题
 注：
@@ -31,7 +32,7 @@ if __name__ =='__main__':
                         password='Cloud25683',
                         core = 'HaiZhi',
                         type = 'HistoryTrading',
-                        initial_time='2018-01-01',
+                        initial_time='2018-01-02',
                         initial_money = 1000000)
         #运行回测引擎的策略
         try:
@@ -53,5 +54,5 @@ if __name__ =='__main__':
                         initial_money=1000000)
         # 运行实盘模拟引擎的策略
         engine.run_stratagy(test)
-    realtime_trading_example()
-    #history_trading_example()
+    #realtime_trading_example()
+    history_trading_example()
