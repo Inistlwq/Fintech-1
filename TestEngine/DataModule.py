@@ -35,6 +35,13 @@ class DataModule(object):
             self._cache['HS300s'] = self._di.HS300s()
         return self._cache['HS300s']
 
+    def stock_name(self,security):
+        stocks = self.stocks()
+        name = stocks.loc[stocks.security==security]['name']
+        if name.empty:
+            return
+        else:
+            return list(name)[0]
 if __name__ =='__main__':
     import StateModule
     StateModule = StateModule.StateModule(initial_time = '2018-5-31',initial_money=1000000)

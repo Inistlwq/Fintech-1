@@ -38,7 +38,7 @@ if __name__ =='__main__':
         #运行回测引擎的策略
         print engine.buy('600000',1000)
         engine.run_stratagy(test)
-
+        print engine.trade_log
         #讲海知平台的回测交割单输出到csv文件
         #engine._core.history_to_csv()
 

@@ -33,7 +33,7 @@ class StateModule(object):
 
         self._position = pd.DataFrame({'date':[],'security':[],'hold':[],'can_trade':[]})
         self.trade_log = pd.DataFrame({'timestamp':[datetime.datetime(2010,1,1)],
-                                       'security':[0],
+                                       'security':['0'],
                                         'name':['海知科技'],
                                         'operation':['系统发放'],
                                        'price_order':[0],
@@ -45,6 +45,7 @@ class StateModule(object):
                                        'security_holding':[0],
                                        'happend_fund':[initial_money],
                                        'fund_remain':[initial_money]})
+        self.trade_log = self.trade_log.set_index('timestamp')
 
     def next_day(self):
         '''
@@ -70,5 +71,15 @@ class StateModule(object):
     @property
     def current_money(self):
         return self._current_money
+    @current_money.setter
+    def current_money(self,x):
+        self._current_money = x
+
+    def security_holding(self,security):
+        security_holding = self.trade_log.loc[self.trade_log['security'] == str(security)]['security_holding']
+        if security_holding.empty:
+            return 0
+        else:
+            return security_holding[-1]
 
 

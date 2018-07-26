@@ -200,7 +200,9 @@ class Engine(object):
         '''
         self._context = Context(self._StateModule,self._DataModule,self._context.user_data)
         return self._context
-
+    @property
+    def trade_log(self):
+        return self._StateModule.trade_log
     def run_stratagy(self, func,*args,**kwargs):
         '''
         讲当前的策略（函数）作为参数传入，同时，将context传入策略当中
