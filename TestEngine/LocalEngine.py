@@ -49,4 +49,4 @@ class LocalEngine(object):
                                               'happen_fund': '发生金额',
                                               'fund_remain': '现金余额'})
 
-        trade_log.to_csv('%s.csv'%file_name, sep=",", index=False, encoding='utf-8')
+        trade_log.to_csv('%s.csv'%file_name, sep=",", index=False, encoding='gbk')

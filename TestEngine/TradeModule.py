@@ -7,10 +7,11 @@ class TradeModule(object):
         self._DataModule = DataModule
 
     def tax(self,money):
-        return 0
+        tax = money *0.001
+        return tax
     def fee(self,money):
-        tax = money * 0.0003
-        return round(tax, 3)
+        fee = money * 0.0003
+        return round(fee, 3)
 
     def buy(self,security,volume,price_type='now_price',price=None):
         #读入股票数据
@@ -25,7 +26,7 @@ class TradeModule(object):
             if cost > self._StateModule.current_money:
                 return '购买失败，现金不足'
             fee = self.fee(cost)
-            tax = self.tax(cost)
+            tax = 0
             other_fee = 0
             security_holding = self._StateModule.security_holding(security)
             #填写交割单

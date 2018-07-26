@@ -36,7 +36,7 @@ if __name__ =='__main__':
                         end_date='2018-1-5',
                         initial_money = 1000000)
         #运行回测引擎的策略
-        print engine.buy('600000',1000)
+        #print engine.buy('600000',1000)
         engine.run_stratagy(test)
 
         print engine._core.history_to_csv()
