@@ -32,7 +32,7 @@ if __name__ =='__main__':
                         password='Cloud25683',
                         #core = 'HaiZhi',
                         #type = 'HistoryTrading',
-                        initial_time='2018-01-01',
+                        initial_time='2018-01-02',
                         end_date='2018-1-5',
                         initial_money = 1000000)
         #运行回测引擎的策略

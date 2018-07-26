@@ -10,8 +10,16 @@ class TradeModule(object):
     def fee(self,money):
         pass
 
-    def buy(self):
-        print self._StateModule.current_time
+    def buy(self,security,volume,price_type='now_price',price=None):
+        shd = self._DataModule.stock_history_data(security)
+        if self._StateModule.current_time not in shd.index:
+            return 'fail,stock does not trade today'
+        else:
+            return '?',shd.loc[self._StateModule.current_time]
 
-    def sell(self):
-        print self._StateModule.current_time
+    def sell(self,security,volume,price_type='now_price',price=None):
+        shd = self._DataModule.stock_history_data(security)
+        if self._StateModule.current_time not in shd.index:
+            return 'fail,stock does not trade today'
+        else:
+            return '?', shd[self._StateModule.current_time]

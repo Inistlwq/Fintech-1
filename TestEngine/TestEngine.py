@@ -110,8 +110,10 @@ class Engine(object):
                 self._end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
             elif isinstance(end_date, datetime.datetime):
                 self._end_date = end_date
-            self._TradeModule = TradeModule(StateModule,DataModule)
-            self._core = LocalEngine(self._StateModule,self._DataModule,self._TradeModule)
+            self._TradeModule = TradeModule(self._StateModule,self._DataModule)
+            self._core = LocalEngine(StateModule = self._StateModule,
+                                     DataModule = self._DataModule,
+                                     TradeModule = self._TradeModule)
 
         elif core == 'HaiZhi':
             self._core = HaiZhiTestEngine(user_id = self._user_name, password= self._password,type = type)

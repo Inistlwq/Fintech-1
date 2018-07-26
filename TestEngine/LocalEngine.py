@@ -6,10 +6,11 @@ class LocalEngine(object):
         self._DataModule = DataModule
         self._TradeModule = TradeModule
 
-    def buy(self,security,volume,price_type,price):
-        pass
-    def sell(self,security,volume,price_type,price):
-        pass
+    def buy(self,security,volume,price_type='now_price',price=None):
+        return  self._TradeModule.buy(security,volume,price_type,price)
+
+    def sell(self,security,volume,price_type='now_price',price=None):
+        return self._TradeModule.sell(security,volume,price_type,price)
 
     @property
     def current_time(self):

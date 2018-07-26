@@ -32,6 +32,19 @@ class StateModule(object):
         self._current_money = initial_money#当前现金初始化为初始现金
 
         self._position = pd.DataFrame({'date':[],'security':[],'hold':[],'can_trade':[]})
+        self.trade_log = pd.DataFrame({'timestamp':[datetime.datetime(2010,1,1)],
+                                       'security':[0],
+                                        'name':['海知科技'],
+                                        'operation':['系统发放'],
+                                       'price_order':[0],
+                                       'price_deal':[0],
+                                       'fund_deal':[0],
+                                       'fee':[0],
+                                       'tax':[0],
+                                       'other_fee':[0],
+                                       'security_holding':[0],
+                                       'happend_fund':[initial_money],
+                                       'fund_remain':[initial_money]})
 
     def next_day(self):
         '''
