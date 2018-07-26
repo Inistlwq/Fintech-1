@@ -125,6 +125,7 @@ class HaiZhiTestEngine(object):
                    'effect_term':str(effect_term)}
             self._core.set_stock_dic(dic)
             res = self._core.buy()
+
             return json.loads(res)
         elif isinstance(self._core,HistoryTrading):
             if not date:

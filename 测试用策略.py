@@ -32,11 +32,11 @@ if __name__ =='__main__':
                         password='Cloud25683',
                         #core = 'HaiZhi',
                         #type = 'HistoryTrading',
-                        initial_time='2018-01-02',
+                        initial_time='2018-01-01',
+                        end_date='2018-1-5',
                         initial_money = 1000000)
         #运行回测引擎的策略
-        engine.context.user_data['fuck'] = 'fuck'
-        print engine.context.user_data
+        print engine.buy('600000',1000)
         engine.run_stratagy(test)
 
         #讲海知平台的回测交割单输出到csv文件

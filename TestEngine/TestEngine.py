@@ -178,6 +178,7 @@ class Engine(object):
                            price = price,
                            date = date,
                            effect_term=effect_term)
+            return result
         elif isinstance(self._core,LocalEngine):
             result = self._core.sell(security=code,
                                     volume=volume,
