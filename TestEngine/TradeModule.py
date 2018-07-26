@@ -4,8 +4,14 @@ class TradeModule(object):
         self._StateModule = StateModule
         self._DataModule = DataModule
 
-    def buy(self):
+    def tax(self,money):
         pass
 
-    def sell(self):
+    def fee(self,money):
         pass
+
+    def buy(self):
+        print self._StateModule.current_time
+
+    def sell(self):
+        print self._StateModule.current_time

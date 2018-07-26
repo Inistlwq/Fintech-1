@@ -1,8 +1,13 @@
 #coding:utf-8
+'''
+评测引擎的总结口，在设计上，使用者只需要直接调用这个文件当中的接口就可以满足需求
+'''
 import datetime
 from HaiZhiInterface.HaiZhiTestEngine import HaiZhiTestEngine,HistoryTrading,RealTimeTrading
 import StateModule
 import DataModule
+from LocalEngine import LocalEngine
+from TradeModule import TradeModule
 
 '''装饰器'''
 
@@ -51,7 +56,7 @@ class Context(object):
     '''
     上下文类，用来在回测引擎和测试程序中传递数据
     '''
-    def __init__(self,StateModule,DataModule):
+    def __init__(self,StateModule,DataModule,user_data = {}):
 
         self._initial_time = StateModule.initial_time
         self._initial_money = StateModule.initial_money
@@ -60,6 +65,8 @@ class Context(object):
         self._current_money = StateModule.current_money
 
         self.DataModule = DataModule
+
+        self.user_data =user_data
 
     @property
     def current_time(self):
@@ -98,7 +105,14 @@ class Engine(object):
 
         #初始化回测引擎核心组件
         if core == 'local':
-            self._core = 'local'
+            # 初始化结束日期
+            if isinstance(end_date, str):
+                self._end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            elif isinstance(end_date, datetime.datetime):
+                self._end_date = end_date
+            self._TradeModule = TradeModule(StateModule,DataModule)
+            self._core = LocalEngine(self._StateModule,self._DataModule,self._TradeModule)
+
         elif core == 'HaiZhi':
             self._core = HaiZhiTestEngine(user_id = self._user_name, password= self._password,type = type)
             if type =='HistoryTrading':
@@ -115,6 +129,8 @@ class Engine(object):
             elif type =='RealTimeTrading':
                 initial_time = datetime.datetime.today().strftime('%Y-%m-%d')
 
+        #初始化context
+        self._context = Context(self._StateModule,self._DataModule)
 
 
     def _next_day(self):
@@ -123,6 +139,7 @@ class Engine(object):
         :return:
         '''
         self._StateModule.next_day()
+
         if isinstance(self._core,HaiZhiTestEngine):
             self._core.current_time = self._StateModule.current_time
 
@@ -139,9 +156,15 @@ class Engine(object):
                            price = price,
                            date = date,
                            effect_term=effect_term)
-        elif isinstance(self._core,str) and self._core == 'local':
-            pass
-        return result
+            return result
+
+        elif isinstance(self._core,LocalEngine):
+            result = self._core.buy(security=code,
+                                    volume=volume,
+                                    price_type=price_type,
+                                    price=price,)
+            return result
+
     #@input_checker
     def sell(self, code, volume, price_type='now_price', price=None, date=None, effect_term=1):
         # 设置默认输入
@@ -155,9 +178,13 @@ class Engine(object):
                            price = price,
                            date = date,
                            effect_term=effect_term)
-        elif isinstance(self._core,str) and self._core == 'local':
-            pass
-        return result
+        elif isinstance(self._core,LocalEngine):
+            result = self._core.sell(security=code,
+                                    volume=volume,
+                                    price_type=price_type,
+                                    price=price, )
+            return result
+
     @property
     def core(self):
         return self._core.__class__
@@ -168,7 +195,7 @@ class Engine(object):
         在调用的过程中动态生成context与程序进行交互
         :return:
         '''
-        self._context = Context(self._StateModule,self._DataModule)
+        self._context = Context(self._StateModule,self._DataModule,self._context.user_data)
         return self._context
 
     def run_stratagy(self, func,*args,**kwargs):
@@ -186,6 +213,10 @@ class Engine(object):
                     self._next_day()
             elif self._core.core == RealTimeTrading:#实盘模拟
                 func(self.context, self)
+        elif isinstance(self._core,LocalEngine):
+            while self._StateModule.current_time < self._end_date:
+                func(self.context, self)
+                self._next_day()
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@
 from TestEngine.TestEngine import Engine
 def test(context,engine):
     print '当前运行时间',context.current_time#当前运行时间
-    hs300s = context.DataModule.HS300s()#获取沪深300指数
+    hs300s = context.DataModule.HS300s()[:3]#获取沪深300指数
     for security in hs300s.index:
         data = context.DataModule.stock_history_data(security)
         try:
@@ -30,16 +30,17 @@ if __name__ =='__main__':
         #初始化回测引擎
         engine = Engine(user_name='海知平台测试接口样例',
                         password='Cloud25683',
-                        core = 'HaiZhi',
-                        type = 'HistoryTrading',
+                        #core = 'HaiZhi',
+                        #type = 'HistoryTrading',
                         initial_time='2018-01-02',
                         initial_money = 1000000)
         #运行回测引擎的策略
-
+        engine.context.user_data['fuck'] = 'fuck'
+        print engine.context.user_data
         engine.run_stratagy(test)
 
         #讲海知平台的回测交割单输出到csv文件
-        engine._core.history_to_csv()
+        #engine._core.history_to_csv()
 
     def realtime_trading_example():
         '''
