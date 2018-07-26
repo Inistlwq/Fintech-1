@@ -68,8 +68,14 @@ class Context(object):
 '''TestEngine类'''
 
 class Engine(object):
-    def __init__(self,user_name = '',password = '',core = 'local',type = 'HistoryTrading',
-                 initial_time='2018-01-01',initial_money=100000):
+    def __init__(self,
+                 user_name = '',
+                 password = '',
+                 core = 'local',
+                 type = 'HistoryTrading',
+                 initial_time='2018-01-01',
+                 end_date = datetime.datetime.today(),
+                 initial_money=100000):
         '''
         测试引擎总接口，包括本地测试内核和海知平台测试内核。
         接口中需要根据不同的引擎内核进行相应的操作分流
@@ -84,6 +90,13 @@ class Engine(object):
             self._password = password
         else:
             raise (ValueError,'请输入用户名和密码!')
+
+        # 初始化各个模块
+        self._StateModule = StateModule.StateModule(initial_time=initial_time, initial_money=initial_money)
+        self._DataModule = DataModule.DataModule(self._StateModule)
+
+
+        #初始化回测引擎核心组件
         if core == 'local':
             self._core = 'local'
         elif core == 'HaiZhi':
@@ -93,11 +106,16 @@ class Engine(object):
                 self._core.del_stratagy(user_name)
                 self._core.create_stratagy(user_name)
                 self._core.set_stratagy(user_name)
+                #初始化结束日期
+                if isinstance(end_date,str):
+                    self._end_date = datetime.datetime.strptime(end_date,'%Y-%m-%d')
+                elif isinstance(end_date,datetime.datetime):
+                    self._end_date = end_date
+
             elif type =='RealTimeTrading':
                 initial_time = datetime.datetime.today().strftime('%Y-%m-%d')
-        #初始化各个模块
-        self._StateModule = StateModule.StateModule(initial_time=initial_time,initial_money=initial_money)
-        self._DataModule = DataModule.DataModule(self._StateModule)
+
+
 
     def _next_day(self):
         '''
@@ -163,7 +181,7 @@ class Engine(object):
         '''
         if isinstance(self._core, HaiZhiTestEngine):#海知测试引擎
             if self._core.core == HistoryTrading:#历史回测
-                while self._StateModule.current_time < datetime.datetime.today():
+                while self._StateModule.current_time < self._end_date:
                     func(self.context,self)
                     self._next_day()
             elif self._core.core == RealTimeTrading:#实盘模拟

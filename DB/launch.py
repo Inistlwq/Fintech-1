@@ -12,6 +12,14 @@ import tushare as ts
 import datetime
 import time
 import sys
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+'''
+注：对于字符编码问题，可以将字符编码统一转换成unicode,再将系统默认编码转化为utf-8
+'''
+
 class launcher(object):
 
     def __init__(self,DB_name):
@@ -43,7 +51,9 @@ class launcher(object):
             try:
                 self._session.query(Stock).filter(Stock.security == security).one()
             except:
-                stock = Stock(security=security, name=df.ix[security]['name'])
+                name = df.ix[security]['name']
+                name = unicode(name)
+                stock = Stock(security=security, name=name)
                 self._session.add(stock)
                 self._session.commit()
 
@@ -73,6 +83,10 @@ class launcher(object):
                     else:
                         for key in dic:
                             df[key] = dic[key]
+                    if 'turnover' in df.columns:
+                        turnover = df.ix[date]['turnover']
+                    else:
+                        turnover = -1
                     stock_history_item = StockHistory(id='%s/%s' % (security, date),
                                                       date=datetime.datetime.strptime(date, '%Y-%m-%d'),
                                                       open=df.ix[date]['open'],
@@ -88,7 +102,7 @@ class launcher(object):
                                                       v_ma5=df.ix[date]['v_ma5'],
                                                       v_ma10=df.ix[date]['v_ma10'],
                                                       v_ma20=df.ix[date]['v_ma20'],
-                                                      turnover=df.ix[date]['turnover'])
+                                                      turnover=turnover)
                     stock.history.append(stock_history_item)
                 else:
                     pass
@@ -158,16 +172,15 @@ class launcher(object):
                                      date = data.loc[i]['date'],
                                      weight = data.loc[i]['weight'])
                 try:
-                    self._session.query(HS300s).filter(HS300s.id == id),one()
+                    self._session.query(HS300s).filter(HS300s.id == id).one()
                 except:
                     self._session.add(HS300s_item)
                 self._session.commit()
 
 if __name__ =='__main__':
-
+    #自动更新数据谷
     l = launcher('test.sqlite3')
-    #l.update_stocks()#更新股票列表
+    l.update_stocks()#更新股票列表
     l.update_all_stock_history()
-
-    #l.fix()
-    #l.update_HS300s()
+    l.fix()
+    l.update_HS300s()

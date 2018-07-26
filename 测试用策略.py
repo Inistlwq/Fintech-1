@@ -35,10 +35,9 @@ if __name__ =='__main__':
                         initial_time='2018-01-02',
                         initial_money = 1000000)
         #运行回测引擎的策略
-        try:
-            engine.run_stratagy(test)
-        except:
-            pass
+
+        engine.run_stratagy(test)
+
         #讲海知平台的回测交割单输出到csv文件
         engine._core.history_to_csv()
 
