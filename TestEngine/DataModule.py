@@ -22,13 +22,13 @@ class DataModule(object):
         :return:
         '''
         if str(security) not in self._cache['stock_history_data']:
-            self._cache['stock_history_data'][security] = self._di.stock_history_data(security=security)
+            self._cache['stock_history_data'][security] = self._di.stock_history_data(security=security).sort_index()
         data = self._cache['stock_history_data'][security]
         #日期筛选，只返回当前回测时间之前的数据
-        before = self._StateModule.current_time.strftime('%Y-%m-%d')
+        index = (self._StateModule.current_time-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        data = data[:index]
+        return data
 
-        return data[before:]#注意，时间标签是从过去到现在的，不要弄反了
-    
 
 
     def HS300s(self,date = None):

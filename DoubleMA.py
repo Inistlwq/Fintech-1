@@ -6,6 +6,7 @@
 
 import pandas as pd
 import numpy as np
+import datetime
 from TestEngine.TestEngine import Engine
 
 def ma(df,time_length):
@@ -18,12 +19,13 @@ def ma(df,time_length):
     if time_length > len(df):
         return False
     else:
-        df = df[0-time_length:]
+        #print df.index
+        df = df[-time_length:]
         return np.sum(df.close)/time_length
 
 def double_ma(context,engine):
-    l = 60
-    s = 10
+    l = 30
+    s = 5
     print '当前运行时间',context.current_time#当前运行时间
     hs300s = context.DataModule.HS300s()#获取沪深300指数
     for security in hs300s.index:
@@ -32,12 +34,14 @@ def double_ma(context,engine):
         sma = ma(shd,s)
         lma_l = ma(shd[:-1],l)
         sma_l = ma(shd[:-1],s)
+
         if lma and sma and lma_l and sma_l:
             #print lma ,sma ,lma_l ,sma_l
             if lma < sma and lma_l > sma_l:#5日均线超过了60日均线
-                print engine.buy(code = str(security),volume=1000)
+                print security,engine.buy(code = str(security),volume=500)
             elif lma > sma and lma_l < sma_l:#60日均线超过了5日均线
-                print engine.sell(code=str(security), volume=1000)
+                if engine._StateModule.security_holding(security) >= 500:
+                    print security,engine.sell(code=str(security), volume=500)
 
 if __name__ =='__main__':
     def history_trading_example():
@@ -78,8 +82,8 @@ if __name__ =='__main__':
         #数据准备
         engine = Engine(user_name='海知平台测试接口样例',
                         password='Cloud25683',
-                        # core = 'HaiZhi',
-                        # type = 'HistoryTrading',
+                        #core = 'HaiZhi',
+                        #type = 'HistoryTrading',
                         initial_time='2017-07-01',
                         #end_date='2018-1-5',
                         initial_money=1000000)
@@ -88,8 +92,7 @@ if __name__ =='__main__':
         security = '601390'
         name = dm.stock_name(security)
         print engine.context.current_time
-        data = dm.stock_history_data(security)
-        print data
+        shd = dm.stock_history_data(security)
 
         #显示数据
         import matplotlib.pyplot as plt
@@ -102,8 +105,12 @@ if __name__ =='__main__':
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot_date(data.index, data.close, '-')
+        print len(shd)
+        lma = [ma(shd[:date],60) for date in shd.index]
+        sma = [ma(shd[:date],10) for date in shd.index]
 
+        ax.plot_date(shd.index, lma, '-')
+        ax.plot_date(shd.index, sma, '-')
         # format the ticks
         ax.xaxis.set_major_formatter(daysFmt)
         ax.autoscale_view()

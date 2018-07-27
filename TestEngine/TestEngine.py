@@ -64,6 +64,8 @@ class Context(object):
         self._current_time = StateModule.current_time
         self._current_money = StateModule.current_money
 
+        self._trade_log = StateModule.trade_log
+
         self.DataModule = DataModule
 
         self.user_data =user_data
@@ -71,6 +73,10 @@ class Context(object):
     @property
     def current_time(self):
         return self._current_time
+
+    @property
+    def trade_log(self):
+        return self._trade_log
 
 '''TestEngine类'''
 
