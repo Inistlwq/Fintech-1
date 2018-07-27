@@ -9,13 +9,14 @@
 from TestEngine.TestEngine import Engine
 def test(context,engine):
     print '当前运行时间',context.current_time#当前运行时间
-    hs300s = context.DataModule.HS300s()[:3]#获取沪深300指数
+    hs300s = context.DataModule.HS300s()[:20]#获取沪深300指数
     for security in hs300s.index:
         data = context.DataModule.stock_history_data(security)
         try:
             if sum(data.iloc[0:5].close)/5 > data.iloc[5].close:
                 print security,engine.buy(str(security),volume= 100)
             else:
+                print context.StateModule.security_can_trade(security)
                 print security,engine.sell(str(security),volume= 100)
         except:
             print security
@@ -32,8 +33,8 @@ if __name__ =='__main__':
                         password='Cloud25683',
                         #core = 'HaiZhi',
                         #type = 'HistoryTrading',
-                        initial_time='2018-01-02',
-                        end_date='2018-1-5',
+                        initial_time='2017-01-02',
+                        #end_date='2018-1-5',
                         initial_money = 1000000)
         #运行回测引擎的策略
         #print engine.buy('600000',1000)
@@ -61,15 +62,20 @@ if __name__ =='__main__':
         import matplotlib.pyplot as plt
         engine = Engine(user_name='海知平台测试接口样例',
                         password='Cloud25683',
-                        # core = 'HaiZhi',
-                        # type = 'HistoryTrading',
+                        #core = 'HaiZhi',
+                        #type = 'HistoryTrading',
                         initial_time='2018-06-4',
                         end_date='2018-1-5',
                         initial_money=1000000,)
 
         print engine.context.current_time
-        print engine.context.DataModule.stock_history_data('600848').index
+        #print engine.context.DataModule.stock_history_data('600848').index
         print engine.buy('600848',1000)
+        print engine.context.StateModule.security_can_trade('600848')
+        engine._next_day()
         print engine.sell('600848',500)
+        print engine.context.StateModule.security_can_trade('600848')
+        print engine.context.StateModule.security_holding('600848')
         engine._core.history_to_csv()
     other()
+    #history_trading_example()

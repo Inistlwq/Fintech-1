@@ -56,7 +56,7 @@ class TradeModule(object):
         if self._StateModule.current_time not in shd.index:  # 当日不可交易
             return 'fail,stock does not trade today'
         else:  # 当日可以交易,按照收盘价交易
-            if volume > self._StateModule.security_holding(security):
+            if volume > self._StateModule.security_can_trade(security):
                 return '卖出失败，股票持仓不足'
             # 统计交易数据
             name = self._DataModule.stock_name(security)

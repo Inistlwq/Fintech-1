@@ -24,8 +24,8 @@ def ma(df,time_length):
         return np.sum(df.close)/time_length
 
 def double_ma(context,engine):
-    l = 30
-    s = 5
+    l = 60
+    s = 10
     print '当前运行时间',context.current_time#当前运行时间
     hs300s = context.DataModule.HS300s()#获取沪深300指数
     for security in hs300s.index:
@@ -52,8 +52,8 @@ if __name__ =='__main__':
         #初始化回测引擎
         engine = Engine(user_name='海知平台测试接口样例',
                         password='Cloud25683',
-                        core = 'HaiZhi',
-                        type = 'HistoryTrading',
+                        #core = 'HaiZhi',
+                        #type = 'HistoryTrading',
                         initial_time='2017-01-01',
                         #end_date='2018-1-1',
                         initial_money = 1000000)

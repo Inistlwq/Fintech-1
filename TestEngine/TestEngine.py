@@ -67,6 +67,7 @@ class Context(object):
         self._trade_log = StateModule.trade_log
 
         self.DataModule = DataModule
+        self._StateModule = StateModule
 
         self.user_data =user_data
 
@@ -78,6 +79,9 @@ class Context(object):
     def trade_log(self):
         return self._trade_log
 
+    @property
+    def StateModule(self):
+        return self._StateModule
 '''TestEngine类'''
 
 class Engine(object):

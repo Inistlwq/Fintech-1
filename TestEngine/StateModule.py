@@ -1,6 +1,7 @@
 #coding:utf-8
 import pandas as pd
 import datetime
+import numpy as np
 
 def standard_time_input(time):
     '''
@@ -82,5 +83,19 @@ class StateModule(object):
             return 0
         else:
             return security_holding[-1]
+
+    def security_can_trade(self,security):
+        log = self.trade_log.loc[self.trade_log['security'] == str(security)]
+        print log
+        if log.empty:
+            return 0
+        else:
+            if self.current_time in log:
+                log = log.reset_index()
+                security_freeze = log.loc[(log['timestamp'] == self.current_time) &(log['operation'] == '买入')]['volume']
+                security_can_trade = log['security_holding'][-1]-np.sum(security_freeze)
+                return security_can_trade
+            else:
+                return self.security_holding(security)
 
 
