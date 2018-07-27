@@ -2,6 +2,7 @@
 from DB.DataInterface import DataInterface
 import datetime
 import pandas as pd
+import sys
 class DataModule(object):
     def __init__(self,StateModule):
         self._di = DataInterface()
@@ -25,7 +26,13 @@ class DataModule(object):
             self._cache['stock_history_data'][security] = self._di.stock_history_data(security=security).sort_index()
         data = self._cache['stock_history_data'][security]
         #日期筛选，只返回当前回测时间之前的数据
-        index = (self._StateModule.current_time-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+
+
+        f = sys._getframe(1).f_code.co_name
+        if  f !='sell' and f != 'buy':
+            index = (self._StateModule.current_time - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        else:
+            index = self._StateModule.current_time.strftime('%Y-%m-%d')
         data = data[:index]
         return data
 
