@@ -77,8 +77,13 @@ class DataInterface(object):
         return pd.DataFrame(result).set_index('security')
 
 if __name__ == '__main__':
+
+   # import matplotlib.pyplot as plt
     di = DataInterface()
     #print (di.stocks())
-    print (di.stock_history_data('600038'))
+    data = di.stock_history_data('000540')
+    print data
+    #plt.plot(data)
+    #plt.show()
     # (di.HS300s('2'))
     #di.HS300s_list()

@@ -27,7 +27,8 @@ class DataModule(object):
         #日期筛选，只返回当前回测时间之前的数据
         before = self._StateModule.current_time.strftime('%Y-%m-%d')
 
-        return data[:before]
+        return data[before:]#注意，时间标签是从过去到现在的，不要弄反了
+    
 
 
     def HS300s(self,date = None):

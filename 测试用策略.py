@@ -56,4 +56,21 @@ if __name__ =='__main__':
         # 运行实盘模拟引擎的策略
         engine.run_stratagy(test)
     #realtime_trading_example()
-    history_trading_example()
+    #history_trading_example()
+    def other():
+        import matplotlib.pyplot as plt
+        engine = Engine(user_name='海知平台测试接口样例',
+                        password='Cloud25683',
+                        # core = 'HaiZhi',
+                        # type = 'HistoryTrading',
+                        initial_time='2018-01-02',
+                        end_date='2018-1-5',
+                        initial_money=1000000)
+        dm = engine.context.DataModule
+        security = 601390
+        print dm.stock_name(security)
+        data = dm.stock_history_data(security)['close']
+        print data
+        plt.plot(data)
+        plt.show()
+    other()
