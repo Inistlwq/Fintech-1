@@ -71,8 +71,12 @@ if __name__ =='__main__':
         print engine.context.current_time
         #print engine.context.DataModule.stock_history_data('600848').index
         print engine.buy('600848',1000)
+        print engine.buy('600848', 2000)
         print engine.context.StateModule.security_can_trade('600848')
         engine._next_day()
+        print engine.buy('600848', 2000)
+        print engine.context.StateModule.security_can_trade('600848')
+        print engine.context.StateModule.security_holding('600848')
         print engine.sell('600848',500)
         print engine.context.StateModule.security_can_trade('600848')
         print engine.context.StateModule.security_holding('600848')
