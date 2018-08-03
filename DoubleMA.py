@@ -73,7 +73,7 @@ if __name__ =='__main__':
                         type='RealTimeTrading',
                         initial_money=1000000)
         # 运行实盘模拟引擎的策略
-        engine.run_stratagy(test)
+        engine.run_stratagy(double_ma)
     #realtime_trading_example()
     #history_trading_example()
 
@@ -130,4 +130,5 @@ if __name__ =='__main__':
 
 
     #other()
-    history_trading_example()
+    #history_trading_example()
+    realtime_trading_example()

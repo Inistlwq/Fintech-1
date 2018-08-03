@@ -9,7 +9,7 @@
 from TestEngine.TestEngine import Engine
 def test(context,engine):
     print '当前运行时间',context.current_time#当前运行时间
-    hs300s = context.DataModule.HS300s()[:20]#获取沪深300指数
+    hs300s = context.DataModule.HS300s()#获取沪深300指数
     for security in hs300s.index:
         data = context.DataModule.stock_history_data(security)
         try:
@@ -49,7 +49,8 @@ if __name__ =='__main__':
         海知平台实盘模拟样例
         :return:
         '''
-        engine = Engine(user_name='海知平台测试接口样例',
+        engine = Engine(#user_name='海知平台测试接口样例',
+                        user_name = '18126352115',
                         password='Cloud25683',
                         core='HaiZhi',
                         type='RealTimeTrading',
@@ -81,5 +82,6 @@ if __name__ =='__main__':
         print engine.context.StateModule.security_can_trade('600848')
         print engine.context.StateModule.security_holding('600848')
         engine._core.history_to_csv()
-    other()
+    #other()
     #history_trading_example()
+    realtime_trading_example()
