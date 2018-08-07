@@ -1,6 +1,8 @@
 #coding:utf-8
 import pandas as pd
-
+'''
+交易模块，记录交易具体细节，维护状态控制模块中的数据
+'''
 class TradeModule(object):
     def __init__(self,StateModule,DataModule):
         self._StateModule = StateModule

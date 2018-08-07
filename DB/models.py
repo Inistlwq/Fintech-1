@@ -27,7 +27,7 @@ class StockHistory(Base):
     close = Column(Float)  # 收盘
     high = Column(Float)  # 最高检
     low = Column(Float)  # 最低价
-    volume = Integer  # 成交量
+    volume = Column(Integer)  # 成交量
     price_change = Column(Float)  # 价格变动
     p_change = Column(Float)  # 涨跌幅
     ma5 = Column(Float)  # 5日均价
@@ -46,6 +46,19 @@ class HS300s(Base):
     name = Column(String)
     date = Column(DateTime)#日期
     weight = Column(Float)#权重
+
+class Tick_data(Base):
+    __tablename__ = 'stock_tick'
+
+    id = Column(String, primary_key=True)  # 主键,结构是security+time
+    stock = Column(String, ForeignKey('stock.security'))
+
+    time = Column(DateTime)
+    price = Column(Float)
+    change = Column(Float)
+    volume = Column(Integer)
+    amount = Column(Float)
+    type = Column(String)
 
 if __name__ =='__main__':
     '''

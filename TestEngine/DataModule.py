@@ -3,6 +3,9 @@ from DB.DataInterface import DataInterface
 import datetime
 import pandas as pd
 import sys
+'''
+数据控制模块，主要是用于控制回测过程中的数据返回，防止用户获取回测日期当日的数据
+'''
 class DataModule(object):
     def __init__(self,StateModule):
         self._di = DataInterface()

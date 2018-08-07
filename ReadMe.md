@@ -1,4 +1,6 @@
-#说明
+#Catalog
+
+#Overview
 
 
 Fintech是一套模拟投资系统,基于海知平台的模拟投资系统进行投资。在框架下，可以非常方便的制定模拟投资策略。
@@ -60,4 +62,3 @@ engine.context.user_data['stock_list'] = ['600848','600847']
 ```
 现在我们在策略中通过直接访问`context.user_data['stock_list']`就能查看到我们之前传入的用户变量。我们可以再策略运行中改变这个变量，
 也可以在策略开始之前传入用户自定义的变量。
-#Reference

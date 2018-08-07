@@ -1,4 +1,7 @@
 #coding:utf-8
+'''
+本地回测引擎，用于加速回测过程
+'''
 class LocalEngine(object):
 
     def __init__(self,StateModule,DataModule,TradeModule):

@@ -3,6 +3,15 @@ import pandas as pd
 import datetime
 import numpy as np
 
+'''
+状态控制模块，主要用于维护回测过程中的时间以及资产情况。
+具体维护的内容包括：初始时间
+                 初始资金
+                 当前时间
+                 当前现金
+                 当前持仓情况
+                 历史交割单
+'''
 def standard_time_input(time):
     '''
     标准化输入的时间

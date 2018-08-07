@@ -19,16 +19,22 @@ sys.setdefaultencoding('utf-8')
 '''
 注：对于字符编码问题，可以将字符编码统一转换成unicode,再将系统默认编码转化为utf-8
 '''
-
+'''
+脚本用于初始化项目数据库以及更新项目数据库
+'''
 class launcher(object):
 
     def __init__(self,DB_name):
+        '''
+        :param DB_name:主要是为了方便拓展数据模块，允许用户使用多个不同的数据集
+        '''
         db_path = os.path.join(os.path.split(os.path.abspath(__file__))[0], DB_name)
         engine = create_engine('sqlite:///%s' % db_path, echo=False, encoding='utf-8')
         Sesstion = sessionmaker(bind=engine)
         self._session = Sesstion()
         Base = declarative_base()
         Base.metadata.create_all(engine)
+
 
     @property
     def session(self):
@@ -141,6 +147,10 @@ class launcher(object):
             self.log('当前进度：%f%%' % (100*progress/length))
 
     def fix(self):
+        '''
+        将一些停牌或者历史数据出现错误的数据从数据库中移除
+        :return:
+        '''
         stocks = self._session.query(Stock).all()
         for stock in stocks:
             result = self.session.query(StockHistory).filter(StockHistory.stock == stock.security).all()
@@ -159,7 +169,7 @@ class launcher(object):
 
     def update_HS300s(self):
         '''
-        更新HS300s指标数据
+        基于tushare，更新HS300s指标数据
         :return:
         '''
         data = ts.get_hs300s()
@@ -177,10 +187,14 @@ class launcher(object):
                     self._session.add(HS300s_item)
                 self._session.commit()
 
-if __name__ =='__main__':
-    #自动更新数据谷
-    l = launcher('test.sqlite3')
-    l.update_stocks()#更新股票列表
-    l.update_all_stock_history()
-    l.fix()
-    l.update_HS300s()
+    def update_stock_tick(self,security):
+        stock = self._session.query(Stock).filter(Stock.security == security).one()  # 获取股票基本信息
+        history_date_list = security._session.query(StockHistory.date).filter(Stock.security == security).all()
+
+#if __name__ == '__main__':
+#自动更新数据谷
+l = launcher('test.sqlite3')
+l.update_stocks()#更新股票列表
+l.update_all_stock_history()
+l.fix()
+l.update_HS300s()

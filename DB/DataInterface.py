@@ -11,6 +11,9 @@ import time
 
 from DB.models import *
 
+'''
+数据接口，将数据库与外部程序链接，从数据库中抽取数据，返回格式化的数据。
+'''
 class DataInterface(object):
     def __init__(self):
         DB_name = 'test.sqlite3'
@@ -34,7 +37,8 @@ class DataInterface(object):
                   'close':[],
                   'high':[],
                   'low':[],
-                  'p_change':[],}
+                  'p_change':[],
+                  'volume':[]}
 
         datas = self._session.query(StockHistory).filter(StockHistory.stock == security).all()
         for item in datas:
@@ -44,6 +48,7 @@ class DataInterface(object):
             result['high'].append(item.high)
             result['low'].append(item.low)
             result['p_change'].append(item.p_change)
+            result['volume'].append(item.volume)
         return pd.DataFrame(result).set_index('date')
 
     def HS300s_list(self):
