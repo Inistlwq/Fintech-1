@@ -44,7 +44,8 @@ def tutorial(context,engine):
 细心的读者会发现，我们为编写的策略传入了两个参数，`context`和`engine`。我们会在今后详细解释这两个参数的作用。
 目前我们只需要知道，`context`主要用于数据交互,`engine`主要用于执行股票买卖等操作。
 
-现在我们执行下面的代码运行我们的策略同时将运行的结果输出到历史交割单文件中。
+现在我们执行下面的代码运行我们的策略同时将运行的结果输出到历史交割单文件中。得到了历史交割单文件，就可以通过海之平台的历史诊断功能
+对策略进行评测了！
 ```python
 engine.run_stratagy(tutorial)#运行策略
 print engine._core.history_to_csv()#将交割单输出
@@ -88,3 +89,13 @@ DataModule.stock_history_data(security)|返回数据库中代码为security的�
 DataModule.stock_name(security)|返回数据库中代码为security的股票历史名称|security:股票代码
 
 #交易接口
+需要注意的是，对于交易接口，无论是实盘模拟还是历史回测，都不需要输入交易的时间．实盘模拟只能在当前日期买卖，历史回测则会在
+回测引擎的当前日期进行买卖．可以通过`context.current_time`查看回测引擎的当前时间．
+
+目前接口只提供限价买卖（包括历史和实盘），定价买卖还在测试当中．
+
+函数名|函数说明|变量说明|
+:-----|:-----|:-----|
+engine.buy(security,volume)|现价买入｜security:股票代码;volume:成交量
+engine.sell(security,volume)|现价卖出｜security:股票代码;volume:成交量
+
