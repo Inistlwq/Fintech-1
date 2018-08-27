@@ -131,123 +131,98 @@ class launcher(object):
         :param security:
         :return:
         '''
+        #检查数据库中已有的数据
+        stock = self._session.query(Stock).filter(Stock.code == ts_code).one()
+        exist_list = self._session.query(StockHistory).filter(StockHistory.stock == stock.code).all()
+        exist_list = [item.date for item in exist_list]
+        #更新数据
         ts.set_token(self._settings['DB']['ts_token'])
         pro = ts.pro_api()
-        history_data = pro.daily(ts_code = ts_code).set_index('trade_date')
-        history_fractor = pro.daily_basic(ts_code = ts_code).set_index('trade_date')
-        #print history_data
+        history_data = pro.daily(ts_code=ts_code).set_index('trade_date')
+        history_fractor = pro.daily_basic(ts_code=ts_code).set_index('trade_date')
         for date in history_data.index:
-            id = ts_code+date
-            trade_date = date_pre(date)
-            open = history_data.loc[date]['open']
-            close = history_data.loc[date]['close']
-            high = history_data.loc[date]['high']
-            low = history_data.loc[date]['low']
-            price_change = history_data.loc[date]['change']
-            pct_change = history_data.loc[date]['pct_change']
-            volume = history_data.loc[date]['vol']
-            amount = history_data.loc[date]['amount']
-            if date in history_fractor.index:
-                turnover_rate = history_fractor.loc[date]['turnover_rate']
-                volume_ratio = history_fractor.loc[date]['volume_ratio']
-                pe = history_fractor.loc[date]['pe']
-                pe_ttm = history_fractor.loc[date]['pe_ttm']
-                pb = history_fractor.loc[date]['pb']
-                ps = history_fractor.loc[date]['ps']
-                ps_ttm = history_fractor.loc[date]['ps_ttm']
-                total_share = history_fractor.loc[date]['total_share']
-                float_share = history_fractor.loc[date]['float_share']
-                free_share = history_fractor.loc[date]['free_share']
-                total_mv = history_fractor.loc[date]['total_mv']
-                circ_mv = history_fractor.loc[date]['circ_mv']
-            else:
-                turnover_rate = None
-                volume_ratio = None
-                pe = None
-                pe_ttm = None
-                pb = None
-                ps = None
-                ps_ttm =None
-                total_share = None
-                float_share = None
-                free_share =None
-                total_mv =None
-                circ_mv = None
+            if date_pre(date) not in exist_list:
+                id = ts_code+date
+                trade_date = date_pre(date)
+                open = history_data.loc[date]['open']
+                close = history_data.loc[date]['close']
+                high = history_data.loc[date]['high']
+                low = history_data.loc[date]['low']
+                price_change = history_data.loc[date]['change']
+                pct_change = history_data.loc[date]['pct_change']
+                volume = history_data.loc[date]['vol']
+                amount = history_data.loc[date]['amount']
+                if date in history_fractor.index:
+                    turnover_rate = history_fractor.loc[date]['turnover_rate']
+                    volume_ratio = history_fractor.loc[date]['volume_ratio']
+                    pe = history_fractor.loc[date]['pe']
+                    pe_ttm = history_fractor.loc[date]['pe_ttm']
+                    pb = history_fractor.loc[date]['pb']
+                    ps = history_fractor.loc[date]['ps']
+                    ps_ttm = history_fractor.loc[date]['ps_ttm']
+                    total_share = history_fractor.loc[date]['total_share']
+                    float_share = history_fractor.loc[date]['float_share']
+                    free_share = history_fractor.loc[date]['free_share']
+                    total_mv = history_fractor.loc[date]['total_mv']
+                    circ_mv = history_fractor.loc[date]['circ_mv']
+                else:
+                    turnover_rate = None
+                    volume_ratio = None
+                    pe = None
+                    pe_ttm = None
+                    pb = None
+                    ps = None
+                    ps_ttm =None
+                    total_share = None
+                    float_share = None
+                    free_share =None
+                    total_mv =None
+                    circ_mv = None
 
-            history_item = StockHistory(id=id,
-                                        date = trade_date,
-                                        open = open,
-                                        close = close,
-                                        high = high,
-                                        low = low,
-                                        price_change=price_change,
-                                        pct_change=pct_change,
-                                        volume=volume,
-                                        amount=amount,
-                                        turnover_rate=turnover_rate,
-                                        volume_ratio=volume_ratio,
-                                        pe=pe,
-                                        pe_ttm = pe_ttm,
-                                        pb=pb,
-                                        ps=ps,
-                                        ps_ttm = ps_ttm,
-                                        total_share=total_share,
-                                        float_share=float_share,
-                                        free_share=free_share,
-                                        total_mv=total_mv,
-                                        circ_mv=circ_mv)
+                history_item = StockHistory(id=id,
+                                            #stock = ts_code,
+                                            date = trade_date,
+                                            open = open,
+                                            close = close,
+                                            high = high,
+                                            low = low,
+                                            price_change=price_change,
+                                            pct_change=pct_change,
+                                            volume=volume,
+                                            amount=amount,
+                                            turnover_rate=turnover_rate,
+                                            volume_ratio=volume_ratio,
+                                            pe=pe,
+                                            pe_ttm = pe_ttm,
+                                            pb=pb,
+                                            ps=ps,
+                                            ps_ttm = ps_ttm,
+                                            total_share=total_share,
+                                            float_share=float_share,
+                                            free_share=free_share,
+                                            total_mv=total_mv,
+                                            circ_mv=circ_mv)
 
-            self._session.add(history_item)
+                stock.history.append(history_item)
         self._session.commit()
+
     def update_all_stock_history(self):
         '''
         自动更新全部历史数据
         （目前已知有一些来自tushare的数据并不是14列，会有一些数据不全的情况）
         :return:
         '''
+        def view_process():
+            self.count+=1
+            print 'process:%.2f%%' % (self.count*100/self.length)
+
         stocks = self._session.query(Stock).all()
-        length = float(len(stocks))
-        progress = 0
+        self.length = len(stocks)
+        self.count = 0.
+
         for stock in stocks:
-            self.log('updating %s' % stock.security)
-            #更新股票数据
-            try:
-                temp = self.update_stock_history(stock.security)
-            except KeyError:#有一些数据信息不全,缺少换手率(turnover)
-                dic = {}
-                info = sys.exc_info()
-                dic[info[1][0]] = -1
-                temp = self.update_stock_history(stock.security,dic)
-
-            if temp:#更新成功
-                self.log('%s updating finish' % stock.security)
-            else:#更新失败
-                info = sys.exc_info()
-                self.log('%s updating fail (%s:%s)' % (stock.security,info[0],info[1]))
-
-            progress += 1#进度条
-            self.log('当前进度：%f%%' % (100*progress/length))
-
-    def fix(self):
-        '''
-        将一些停牌或者历史数据出现错误的数据从数据库中移除
-        :return:
-        '''
-        stocks = self._session.query(Stock).all()
-        for stock in stocks:
-            result = self.session.query(StockHistory).filter(StockHistory.stock == stock.security).all()
-            if not result:
-                data = ts.get_hist_data(stock.security)
-                if isinstance(data,pd.DataFrame) and not data.empty:
-                    print ('update',stock.security)
-                    try:
-                        self.update_stock_history(stock.security)
-                    except:
-                        pass
-                else:
-                    print (stock.security)
-                    pass
-                    #return stock.security
+            self.update_stock_history(stock.code)
+            view_process()
 
     def update_HS300s(self):
         '''
@@ -294,16 +269,15 @@ class launcher(object):
                 stock.tick_data.append(stock_tick_item)
         self._session.commit()
     def test(self):
-        temp = self._session.query(Trade_calendar).all()
+        temp = self._session.query(StockHistory).filter(StockHistory.stock == '000002.SZ').all()
         print len(temp)
         #for item in list(temp):
             #print item
             #self._session.delete(item)
         #self._session.commit()
-#if __name__ == '__main__':
-#自动更新数据谷
-l = launcher()
-#l.update_stocks()#更新股票列表
-#l.update_trade_calendar()
-#l.test()
-l.update_stock_history('000001.SZ')
+if __name__ == '__main__':
+    def init_db():
+        l = launcher()
+        l.update_stocks()#更新股票列表
+        l.update_trade_calendar()#更新交易日历
+        l.update_all_stock_history()#更新所有股票的历史数据

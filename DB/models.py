@@ -32,6 +32,7 @@ class Stock(Base):
     delist_date = Column(Date)
     list_status = Column(String)
     is_hs = Column(String)
+
     history = relationship('StockHistory',backref = 'history')
     tick_data = relationship('Tick_data',backref = 'tick_data')
 
@@ -40,7 +41,7 @@ class StockHistory(Base):
 
     id = Column(String,primary_key=True)#主键,结构是ts_code+date
 
-    stock = Column(String,ForeignKey('stock.security'))
+    stock = Column(String,ForeignKey('stock.code'))
 
     date = Column(DateTime)  # 日期
     open = Column(Float)  # 开盘

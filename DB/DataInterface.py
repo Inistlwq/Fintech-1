@@ -47,7 +47,7 @@ class DataInterface(object):
             result['close'].append(item.close)
             result['high'].append(item.high)
             result['low'].append(item.low)
-            result['p_change'].append(item.p_change)
+            result['p_change'].append(item.pct_change)
             result['volume'].append(item.volume)
         return pd.DataFrame(result).set_index('date')
 
