@@ -22,6 +22,11 @@ class DataModule(object):
             self._cache['stocks'] = self._di.stocks()
         return self._cache['stocks']
 
+    def trade_cal(self):
+        if 'trade_cal' not in self._cache:
+            self._cache['trade_cal'] = self._di.trade_cal()
+        return self._cache['trade_cal']
+
     def stock_history_data(self,security):
         '''
 
@@ -55,9 +60,13 @@ class DataModule(object):
         if name.empty:
             return
         else:
-            return list(name)[0]
+            return list(name)[0].encode('utf-8')
 if __name__ =='__main__':
     import StateModule
     StateModule = StateModule.StateModule(initial_time = '2018-5-31',initial_money=1000000)
     DM = DataModule(StateModule)
-    print DM.stock_history_data('000001')
+    #print DM.stock_history_data('000001').columns
+    #print DM.stock_history_data('000001').index
+    #print DM.trade_cal()
+    #print DM.stocks().columns
+    print DM.stock_name('000001')
