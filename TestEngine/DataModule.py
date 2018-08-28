@@ -19,7 +19,7 @@ class DataModule(object):
 
     def stocks(self):
         if 'stocks' not in self._cache:
-            self._cache['stocks'] = self._di.stocks()
+            self._cache['stocks'] = self._di.stocks().set_index(u'code')
         return self._cache['stocks']
 
     def trade_cal(self):

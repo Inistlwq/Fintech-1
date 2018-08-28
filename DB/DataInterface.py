@@ -73,6 +73,7 @@ class DataInterface(object):
                   'free_share':[],
                   'total_mv':[],
                   'circ_mv':[]}
+
         stock = self._session.query(Stock).filter(Stock.security==security).one()
         datas = self._session.query(StockHistory).filter(StockHistory.stock == stock.code).all()
         for item in datas:

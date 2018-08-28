@@ -156,13 +156,13 @@ class Engine(object):
             self._core.current_time = self._StateModule.current_time
 
     #@input_checker
-    def buy(self,code,volume,price_type='now_price',price=None,date=None,effect_term = 1):
+    def buy(self,security,volume,price_type='now_price',price=None,date=None,effect_term = 1):
         #设置默认输入
         if not date:
             date = self._StateModule.current_time
         #向交易接口传递参数
         if isinstance(self._core,HaiZhiTestEngine):
-            result = self._core.buy(code = code,
+            result = self._core.buy(code = security,
                            volume=volume,
                            price_type =price_type,
                            price = price,
@@ -171,20 +171,20 @@ class Engine(object):
             return result
 
         elif isinstance(self._core,LocalEngine):
-            result = self._core.buy(security=code,
+            result = self._core.buy(security=security,
                                     volume=volume,
                                     price_type=price_type,
                                     price=price,)
             return result
 
     #@input_checker
-    def sell(self, code, volume, price_type='now_price', price=None, date=None, effect_term=1):
+    def sell(self, security, volume, price_type='now_price', price=None, date=None, effect_term=1):
         # 设置默认输入
         if not date:
             date = self._StateModule.current_time
         # 向交易接口传递参数
         if isinstance(self._core,HaiZhiTestEngine):
-            result = self._core.sell(code = code,
+            result = self._core.sell(code = security,
                            volume=volume,
                            price_type =price_type,
                            price = price,
@@ -192,7 +192,7 @@ class Engine(object):
                            effect_term=effect_term)
             return result
         elif isinstance(self._core,LocalEngine):
-            result = self._core.sell(security=code,
+            result = self._core.sell(security=security,
                                     volume=volume,
                                     price_type=price_type,
                                     price=price, )
@@ -210,9 +210,11 @@ class Engine(object):
         '''
         self._context = Context(self._StateModule,self._DataModule,self._context.user_data)
         return self._context
+
     @property
     def trade_log(self):
         return self._StateModule.trade_log
+        
     def run_stratagy(self, func,*args,**kwargs):
         '''
         讲当前的策略（函数）作为参数传入，同时，将context传入策略当中
