@@ -2,17 +2,16 @@
 '''
 初始化数据库，更新数据库数据
 '''
+import sys
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from DB.models import *
-import os
+from models import *
 import pandas as pd
 import tushare as ts
 import datetime
 import time
-import sys
-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -133,7 +132,7 @@ class launcher(object):
         '''
         #检查数据库中已有的数据
         stock = self._session.query(Stock).filter(Stock.code == ts_code).one()
-        exist_list = self._session.query(StockHistory).filter(StockHistory.stock == stock.code).all()
+        exist_list = self._session.query(StockHistory).filter(StockHistory.code==ts_code).all()
         exist_list = [item.date for item in exist_list]
         #更新数据
         ts.set_token(self._settings['DB']['ts_token'])
@@ -180,7 +179,7 @@ class launcher(object):
                     circ_mv = None
 
                 history_item = StockHistory(id=id,
-                                            #stock = ts_code,
+                                            code = ts_code,
                                             date = trade_date,
                                             open = open,
                                             close = close,
@@ -203,6 +202,7 @@ class launcher(object):
                                             total_mv=total_mv,
                                             circ_mv=circ_mv)
 
+                self.session.add(history_item)
                 stock.history.append(history_item)
         self._session.commit()
 
@@ -268,6 +268,7 @@ class launcher(object):
             except:
                 stock.tick_data.append(stock_tick_item)
         self._session.commit()
+        
     def test(self):
         temp = self._session.query(StockHistory).filter(StockHistory.stock == '000002.SZ').all()
         print len(temp)
@@ -277,7 +278,13 @@ class launcher(object):
         #self._session.commit()
 if __name__ == '__main__':
     def init_db():
+        def wrapper(func):
+            print 'running %s' %(func.__name__)
+            func()
+            print '%s finish' % (func.__name__)
+
         l = launcher()
-        l.update_stocks()#更新股票列表
-        l.update_trade_calendar()#更新交易日历
-        l.update_all_stock_history()#更新所有股票的历史数据
+        #wrapper(l.update_stocks)#更新股票列表
+        #wrapper(l.update_trade_calendar)#更新交易日历
+        wrapper(l.update_all_stock_history)#更新所有股票的历史数据
+    init_db()

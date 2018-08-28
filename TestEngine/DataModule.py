@@ -1,4 +1,7 @@
 #coding:utf-8
+from settings import ConfigModule
+ConfigModule()
+
 from DB.DataInterface import DataInterface
 import datetime
 import pandas as pd
