@@ -60,4 +60,4 @@ if __name__ =='__main__':
     import StateModule
     StateModule = StateModule.StateModule(initial_time = '2018-5-31',initial_money=1000000)
     DM = DataModule(StateModule)
-    print DM.stock_history_data('600008')
+    print DM.stock_history_data('000001')

@@ -41,7 +41,7 @@ class StockHistory(Base):
 
     id = Column(String,primary_key=True)#主键,结构是ts_code+date
 
-    code = Column(String,ForeignKey('stock.code'))
+    stock = Column(String,ForeignKey('stock.code'))
 
     date = Column(DateTime)  # 日期
     open = Column(Float)  # 开盘
