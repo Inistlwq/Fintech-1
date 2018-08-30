@@ -80,6 +80,16 @@ class launcher(object):
             self._session.add(cal_item)
         self._session.commit()
 
+    def update_log_init(self):
+        stock_list = self._session.query(Stock).all()
+        for stock in stock_list:
+            log = Update_log(code=stock.code,
+                             #stock = stock.security,
+                             last_update = None)
+
+            stock.update_log.append(log)
+            self._session.add(log)
+        self._session.commit()
 
     def update_stocks(self):
         '''
@@ -221,7 +231,13 @@ class launcher(object):
         self.count = 0.
 
         for stock in stocks:
-            self.update_stock_history(stock.code)
+            try:
+                self.update_stock_history(stock.code)
+                log = self._session.query(Update_log).filter(Update_log.stock == stock.security).one()
+                log.last_update = datetime.datetime.today()
+                self._session.commit()
+            except:
+                print '%s fail'%(stock.code)
             view_process()
 
     def update_HS300s(self):
@@ -286,5 +302,13 @@ if __name__ == '__main__':
         l = launcher()
         wrapper(l.update_stocks)#更新股票列表
         wrapper(l.update_trade_calendar)#更新交易日历
+        wrapper(l.update_log_init)#初始化更新日志
         wrapper(l.update_all_stock_history)#更新所有股票的历史数据
     init_db()
+    def test():
+        l = launcher()
+        log = l._session.query(Update_log).all()
+        for item in log:
+            print item.code,item.stock,item.last_update
+            break
+    #test()

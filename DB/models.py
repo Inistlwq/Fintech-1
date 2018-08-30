@@ -33,6 +33,7 @@ class Stock(Base):
     list_status = Column(String)
     is_hs = Column(String)
 
+    update_log = relationship('Update_log',backref = 'update_log')
     history = relationship('StockHistory',backref = 'history')
     tick_data = relationship('Tick_data',backref = 'tick_data')
 
@@ -87,6 +88,13 @@ class Tick_data(Base):
     volume = Column(Integer)
     amount = Column(Float)
     type = Column(String)
+
+class Update_log(Base):
+    __tablename__ ='update_log'
+
+    stock = Column(String, ForeignKey('stock.security'))
+    code = Column(String,primary_key=True)
+    last_update = Column(Date)
 
 if __name__ =='__main__':
     '''
